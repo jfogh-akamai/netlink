@@ -48,6 +48,9 @@ func (r Rule) Equal(x Rule) bool {
 		r.IPProto == x.IPProto &&
 		r.Protocol == x.Protocol &&
 		r.Mark == x.Mark &&
+		// For non-zero marks, mask defaults to 0xFFFFFFFF if not set. So if either mask is nil
+		// while the other is 0xFFFFFFFF when mark is non-zero, treat the masks as identical.
+		// See kernel source: https://github.com/torvalds/linux/blob/v6.15/net/core/fib_rules.c#L624
 		(ptrEqual(r.Mask, x.Mask) || (r.Mark != 0 &&
 			(r.Mask == nil && *x.Mask == 0xFFFFFFFF || x.Mask == nil && *r.Mask == 0xFFFFFFFF))) &&
 		r.TunID == x.TunID &&
