@@ -707,24 +707,22 @@ func TestRuleEqual(t *testing.T) {
 	}
 }
 
-func TestRuleEqualmaskMark(t *testing.T) {
-	expected := true // These are equal
-	m := &[]uint32{0xFFFFFFFF}[0]
-	cases := []Rule{
-		{Mark: 1, Mask: nil},
-		{Mark: 1, Mask: m},
-		{Mark: 1, Mask: &[]uint32{0xFFFFFFFF}[0]},
+func TestRuleEqualMaskMark(t *testing.T) {
+	a := Rule{Mark: 1, Mask: nil}
+	b := Rule{Mark: 1, Mask: &[]uint32{0xFFFFFFFF}[0]}
+	if !a.Equal(b) || !b.Equal(a) {
+		t.Errorf("Rules are expected to be equal")
 	}
-	for i1 := range cases {
-		for i2 := range cases {
-			got := cases[i1].Equal(cases[i2])
-			if got != expected {
-				t.Errorf("Equal(%q,%q) == %s but expected %s",
-					cases[i1], cases[i2],
-					strconv.FormatBool(got),
-					strconv.FormatBool(expected))
-			}
-		}
+
+	b = Rule{Mark: 2, Mask: &[]uint32{0xFFFFFFFF}[0]}
+	if a.Equal(b) || b.Equal(a) {
+		t.Errorf("Rules are not expected to be equal")
+	}
+
+	a = Rule{Mark: 0, Mask: nil}
+	b = Rule{Mark: 0, Mask: &[]uint32{0xFFFFFFFF}[0]}
+	if a.Equal(b) || b.Equal(a) {
+		t.Errorf("Rules are not expected to be equal")
 	}
 }
 
